@@ -1,7 +1,9 @@
 import { features, serviceTiles } from '../data/homepageContent';
 import FareSearch from './FareSearch';
 
-function HomePage() {
+function HomePage({ currentUser, onLogout }) {
+  const displayName = currentUser?.displayName || currentUser?.email || 'Guest';
+
   return (
     <main className="app-shell">
       <section className="hero">
@@ -11,11 +13,28 @@ function HomePage() {
         <nav className="topbar" aria-label="Primary">
           <div className="topbar__brand-wrap">
             <img src="/logo-aerolink.png" alt="AeroLink" className="topbar__logo" />
+            <div className="topbar__user-block">
+              <span className="topbar__user-label">Signed in as</span>
+              <span className="topbar__user-name">{displayName}</span>
+            </div>
           </div>
 
           <div className="topbar__actions">
             <a href="#services">Services</a>
-            <a href="#auth">Access account</a>
+            {currentUser ? (
+              <button
+                type="button"
+                className="topbar__logout"
+                onClick={onLogout}
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <a href="#/login">Login</a>
+                <a href="#/signup">Signup</a>
+              </>
+            )}
           </div>
         </nav>
 
@@ -65,8 +84,14 @@ function HomePage() {
               <h2>Account access</h2>
               <p>Keep passengers and staff moving with a polished login and signup experience.</p>
               <div className="auth-card__buttons">
-                <a href="#auth" className="button button--dark">Login</a>
-                <a href="#auth" className="button button--ghost">Signup</a>
+                {currentUser ? (
+                  <span className="auth-card__signed-in">Welcome back, {displayName}</span>
+                ) : (
+                  <>
+                    <a href="#/login" className="button button--dark">Login</a>
+                    <a href="#/signup" className="button button--ghost">Signup</a>
+                  </>
+                )}
               </div>
             </div>
 
