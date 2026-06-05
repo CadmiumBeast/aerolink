@@ -1,8 +1,33 @@
+import { useCallback, useEffect, useState } from 'react';
 import { features, serviceTiles } from '../data/homepageContent';
 import FareSearch from './FareSearch';
+import PortManager from './PortManager';
+import { getPorts } from '../services/airlineApi';
 
 function HomePage({ currentUser, onLogout }) {
   const displayName = currentUser?.displayName || currentUser?.email || 'Guest';
+  const [ports, setPorts] = useState([]);
+  const [portsLoading, setPortsLoading] = useState(true);
+  const [portsError, setPortsError] = useState('');
+
+  const loadPorts = useCallback(async () => {
+    setPortsLoading(true);
+    setPortsError('');
+
+    try {
+      const portList = await getPorts();
+      setPorts(Array.isArray(portList) ? portList : []);
+    } catch (err) {
+      setPortsError(err.message || 'Unable to load ports.');
+      setPorts([]);
+    } finally {
+      setPortsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPorts();
+  }, [loadPorts]);
 
   return (
     <main className="app-shell">
@@ -43,8 +68,8 @@ function HomePage({ currentUser, onLogout }) {
             <span className="eyebrow">Airline booking platform</span>
             <h1>Elegant flight booking experiences built for scale.</h1>
             <p className="hero__description">
-              AeroLink is designed to showcase premium signup, login, fare management,
-              and baggage handling in a modern interface that feels fast, clear, and trustworthy.
+              AeroLink is designed to showcase premium signup, login, live airport ports,
+              fare lookup, and baggage handling in a modern interface that feels fast, clear, and trustworthy.
             </p>
 
             <div className="hero__cta">
@@ -55,9 +80,7 @@ function HomePage({ currentUser, onLogout }) {
                 Explore services
               </a>
             </div>
-
-            <FareSearch />
-
+            {/* FareSearch moved to its own section after the hero */}
             <dl className="hero__stats">
               <div>
                 <dt>Booking-ready</dt>
@@ -95,19 +118,41 @@ function HomePage({ currentUser, onLogout }) {
               </div>
             </div>
 
-            <div className="fare-card">
+            {/* <div className="fare-card">
               <div>
                 <span className="fare-card__label">Sample fare</span>
                 <strong>Dubai to Nairobi</strong>
               </div>
               <div className="fare-card__price">$420</div>
-            </div>
+            </div> */}
 
             <div className="baggage-card">
               <span className="fare-card__label">Baggage handling</span>
               <p>Carry-on, checked luggage, and special handling rules organized for quick review.</p>
             </div>
           </aside>
+        </div>
+      </section>
+
+      <section className="section section--search" id="fare-search">
+        <div className="section__heading">
+          <span className="eyebrow">Search fares</span>
+          <h2>Find the right flight</h2>
+        </div>
+
+        <div className="section__content">
+          <FareSearch ports={ports} loadingPorts={portsLoading} portsError={portsError} />
+        </div>
+      </section>
+
+      <section className="section section--management" id="ports">
+        <div className="section__heading">
+          <span className="eyebrow">Port management</span>
+          <h2>Keep origin and destination ports in sync with the live API.</h2>
+        </div>
+
+        <div className="section__content">
+          <PortManager ports={ports} loading={portsLoading} error={portsError} onPortsUpdated={loadPorts} />
         </div>
       </section>
 
