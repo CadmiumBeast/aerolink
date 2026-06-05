@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "amazon-cognito-identity-js": "^6.3.16",
+    "swagger-ui-dist": "^5.32.6",
     "vue": "^3.4.0"
   },
   "devDependencies": {
