@@ -1,9 +1,9 @@
 /*
   Lightweight Cognito helper using amazon-cognito-identity-js.
   Configure the following env vars in your .env file at project root:
-  REACT_APP_COGNITO_USER_POOL_ID
-  REACT_APP_COGNITO_CLIENT_ID
-  REACT_APP_AWS_REGION
+  VITE_COGNITO_USER_POOL_ID
+  VITE_COGNITO_CLIENT_ID
+  VITE_AWS_REGION
 
   Note: Assigning a user to `PassengerGroup` requires an admin action (Lambda PostConfirmation
   or a backend service using AWS SDK). See README notes in this file.
@@ -19,8 +19,8 @@ let _userPool = null;
 
 function getUserPool() {
   if (_userPool) return _userPool;
-  const userPoolId = process.env.REACT_APP_COGNITO_USER_POOL_ID;
-  const clientId = process.env.REACT_APP_COGNITO_CLIENT_ID;
+  const userPoolId = import.meta.env.VITE_COGNITO_USER_POOL_ID;
+  const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
   if (!userPoolId || !clientId) {
     // Do not throw during module init; throw when code actually tries to use the pool.
     return null;
