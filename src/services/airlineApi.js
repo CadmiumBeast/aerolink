@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://d2ehngdbowt7n2.cloudfront.net/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 function parseResponseBody(text) {
   if (!text) {
